@@ -1,0 +1,25 @@
+alias: Home Assistant Voice - Master Bedroom - Button Press
+description: ""
+triggers:
+  - entity_id:
+      - event.home_assistant_voice_0a171f_button_press
+    trigger: state
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: event.home_assistant_voice_0a171f_button_press
+            attribute: event_type
+            state: double_press
+        sequence:
+          - action: assist_satellite.announce
+            metadata: {}
+            data:
+              message: >-
+                Your current blood sugar is {{
+                states('sensor.USERNAME_glucose_value') }}.
+              preannounce: true
+            target:
+              entity_id: assist_satellite.home_assistant_voice_0a171f_assist_satellite
+mode: single
