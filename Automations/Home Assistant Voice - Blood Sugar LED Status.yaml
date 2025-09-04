@@ -1,0 +1,156 @@
+alias: Home Assistant Voice - Blood Sugar LED Status
+description: Show glucose status on LED ring
+triggers:
+  - entity_id:
+      - sensor.USERNAME_glucose_trend
+      - sensor.USERNAME_glucose_value
+    trigger: state
+conditions: []
+actions:
+  - action: logbook.log
+    metadata: {}
+    data:
+      entity_id: sensor.USERNAME_glucose_value
+      name: Glucose Value Debug
+      message: Value={{ states('sensor.USERNAME_glucose_value') }}
+  - action: logbook.log
+    metadata: {}
+    data:
+      name: Glucose Trend Debug
+      entity_id: sensor.USERNAME_glucose_trend
+      message: Trend={{ states('sensor.USERNAME_glucose_trend') }}
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.USERNAME_glucose_value
+            above: 80
+            below: 150
+        sequence:
+          - data:
+              name: Glucose Automation
+              message: GREEN branch matched (value in range)
+            action: logbook.log
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              brightness_pct: 0
+            action: light.turn_on
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.USERNAME_glucose_value
+            above: 150
+        sequence:
+          - action: logbook.log
+            metadata: {}
+            data:
+              name: Glucose Value Automation
+              message: RED branch matched (value out of range)
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 255
+                - 0
+                - 0
+            action: light.turn_on
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.USERNAME_glucose_value
+            below: 80
+        sequence:
+          - action: logbook.log
+            metadata: {}
+            data:
+              name: Glucose Value Automation
+              message: RED branch matched (value out of range)
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 255
+                - 0
+                - 0
+            action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: sensor.USERNAME_glucose_trend
+            state: rising_quickly
+        sequence:
+          - data:
+              name: Glucose Automation
+              message: YELLOW branch matched (trend changing quickly)
+            action: logbook.log
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 255
+                - 255
+                - 0
+            action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: sensor.USERNAME_glucose_trend
+            state: falling_quickly
+        sequence:
+          - data:
+              name: Glucose Automation
+              message: YELLOW branch matched (trend changing quickly)
+            action: logbook.log
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 255
+                - 255
+                - 0
+            action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: sensor.USERNAME_glucose_value
+            state: unknown
+        sequence:
+          - data:
+              name: Glucose Automation
+              message: BLUE branch matched (sensor unavailable/unknown)
+            action: logbook.log
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 135
+                - 206
+                - 250
+            action: light.turn_on
+      - conditions:
+          - condition: state
+            entity_id: sensor.USERNAME_glucose_value
+            state: unavailable
+        sequence:
+          - data:
+              name: Glucose Automation
+              message: BLUE branch matched (sensor unavailable/unknown)
+            action: logbook.log
+          - target:
+              entity_id:
+                - light.home_assistant_voice_0a1e11_led_ring
+                - light.home_assistant_voice_0a171f_led_ring
+            data:
+              rgb_color:
+                - 135
+                - 206
+                - 250
+            action: light.turn_on
+mode: single
