@@ -1,0 +1,78 @@
+type: horizontal-stack
+cards:
+  - type: vertical-stack
+    cards:
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: Weekly Chores - To Do
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "*chores_weekly*"
+              state: "off"
+              options:
+                tap_action:
+                  action: toggle
+          sort:
+            method: name
+            ignore_case: true
+        sort:
+          method: friendly_name
+          numeric: false>
+          reverse: falsetype: horizontal-stack.pssc
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: Weekly Chores - Finished
+          show_state: false
+          columns: 3
+        filter:
+          include:
+            - entity_id: "*chores_weekly*"
+              state: "on"
+              options:
+                tap_action:
+                  action: toggle
+          sort:
+            method: name
+            ignore_case: true
+        sort:
+          method: friendly_name
+  - type: vertical-stack
+    cards:
+      - type: custom:auto-entities
+        card:
+          title: Monthly Chores - To Do
+          type: entities
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "*chores_monthly*"
+              state: "off"
+              last_changed: < 2880
+              options:
+                tap_action:
+                  action: toggle
+        sort:
+          method: last_changed
+          numeric: false
+          reverse: false
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: Monthly Chores - Finished
+          show_state: false
+          columns: 3
+        filter:
+          include:
+            - entity_id: "*chores_monthly*"
+              state: "on"
+              last_changed: < 2880
+              options:
+                tap_action:
+                  action: toggle
+        sort:
+          method: last_changed
+          numeric: false
+          reverse: true
