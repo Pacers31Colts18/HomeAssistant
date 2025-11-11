@@ -1,0 +1,18 @@
+alias: Chores - Reset Weekly Toggle
+description: Reset Weekly Chores
+triggers:
+  - trigger: time
+    at: "00:00:00"
+    weekday:
+      - sun
+conditions: []
+actions:
+  - data: {}
+    target:
+      entity_id:
+        - input_boolean.chores_weekly_vacuum_office
+        - input_boolean.chores_weekly_dusting
+        - input_boolean.chores_weekly_clean_bathroom
+        - input_boolean.chores_weekly_vacuum_basement
+    action: input_boolean.turn_off
+mode: single
